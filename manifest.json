@@ -1,0 +1,20 @@
+{
+  "manifest_version": 2,
+  "name": "Helpdesk Search",
+  "version": "1.0",
+  "description": "Quick search for helpdesk locations and departments",
+  "icons": {
+    "48": "img/icon-48.png",
+    "96": "img/icon-96.png"
+  },
+  "permissions": [
+    "activeTab"
+  ],
+  "browser_action": {
+    "default_icon": {
+      "48": "img/icon-48.png",
+      "96": "img/icon-96.png"
+    },
+    "default_popup": "index.html"
+  }
+}

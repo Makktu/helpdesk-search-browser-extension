@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en" style="height: 100%;">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Helpdesk</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body style="width: 357px; height: 600px; margin: 0; display: flex; flex-direction: column;">
+    <div class="theme-switch-wrapper">
+        <span id="theme-toggle" class="theme-icon">☀️</span>
+    </div>
+    <div class="container">
+        <div class="logo-container">
+            <h1>
+                <span class="blue">H</span><span class="red">e</span><span class="yellow">l</span><span class="blue">p</span><span class="green">d</span><span class="red">e</span><span class="yellow">s</span><span class="blue">k</span>
+            </h1>
+        </div>
+        <div class="search-box">
+            <input type="text" class="search-input" id="locationSearch" placeholder="Search for a room or department...">
+            <button class="clear-button" id="clearSearch" style="display: none;">
+                <svg focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                    <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"></path>
+                </svg>
+            </button>
+        </div>
+        <div id="searchResults" class="search-results" style="display: none;">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Site</th>
+                        <th>Building</th>
+                        <th>Department</th>
+                        <th>Description</th>
+                        <th>Room Number</th>
+                        <th>Floor</th>
+                    </tr>
+                </thead>
+                <tbody id="resultsBody">
+                </tbody>
+            </table>
+            <div id="noResults" style="display: none;">
+                <p>No results for that search</p>
+            </div>
+        </div>
+        <div class="tips-box">
+            <p>Type to search for a room or department</p>
+            <p>Results will update as you type</p>
+        </div>
+    </div>
+    <script src="script.js"></script>
+    <script src="browser-extension-api.js"></script>
+</body>
+</html>
