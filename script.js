@@ -1,16 +1,16 @@
 const toggleIcon = document.getElementById('theme-toggle');
 
 function switchTheme() {
-    const currentTheme = document.documentElement.getAttribute('data-theme');
-    if (currentTheme === 'dark') {
-        document.documentElement.setAttribute('data-theme', 'light');
-        localStorage.setItem('theme', 'light');
-        toggleIcon.textContent = '☀️';  // Set to sun emoji
-    } else {
-        document.documentElement.setAttribute('data-theme', 'dark');
-        localStorage.setItem('theme', 'dark');
-        toggleIcon.textContent = '🌙';  // Set to moon emoji
-    }
+  const currentTheme = document.documentElement.getAttribute('data-theme');
+  if (currentTheme === 'dark') {
+    document.documentElement.setAttribute('data-theme', 'light');
+    localStorage.setItem('theme', 'light');
+    toggleIcon.textContent = '☀️'; // Set to sun emoji
+  } else {
+    document.documentElement.setAttribute('data-theme', 'dark');
+    localStorage.setItem('theme', 'dark');
+    toggleIcon.textContent = '🌙'; // Set to moon emoji
+  }
 }
 
 toggleIcon.addEventListener('click', switchTheme);
@@ -18,95 +18,95 @@ toggleIcon.addEventListener('click', switchTheme);
 // Check for saved theme preference
 const currentTheme = localStorage.getItem('theme');
 if (currentTheme) {
-    document.documentElement.setAttribute('data-theme', currentTheme);
-    toggleIcon.textContent = currentTheme === 'dark' ? '🌙' : '☀️';
+  document.documentElement.setAttribute('data-theme', currentTheme);
+  toggleIcon.textContent = currentTheme === 'dark' ? '🌙' : '☀️';
 }
 
 // Function to load and search location data
 async function searchLocations(searchTerm) {
-    try {
-        const response = await fetch(browser.runtime.getURL('locations.csv'));
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        const csvText = await response.text();
-        
-        // Convert search term to lowercase for case-insensitive search
-        searchTerm = searchTerm.toLowerCase();
-        
-        // Parse CSV
-        const results = [];
-        const lines = csvText.split('\n');
-        const headers = lines[0].split(',').map(header => header.replace(/"/g, '').trim());
-        
-        // Process each line after headers
-        for (let i = 1; i < lines.length; i++) {
-            if (!lines[i].trim()) continue; // Skip empty lines
-            
-            // Split lines by comma
-            const values = lines[i].split(',').map(value => {
-                // Remove quotes, and trim
-                return value.replace(/^["']|["']$/g, '').trim();
-            });
-            
-            // Map CSV columns to expected format using explicit indexes - yes, this is a kludgy way of doing it, but I am a hack and it works...
-            const mappedLocation = {
-                'Site': values[0] || '-',
-                'Building': values[1] || '-',
-                'Floor': values[2] || '-',
-                'Description': values[4] || '-',
-                'Room Num': values[5] || '-',
-                'Department': (values[9] || '-').replace(/["']/g, '') // Extra cleanup for Department
-            };
-
-            console.log('Mapped location:', mappedLocation);
-
-            // Search relevant fields only
-            if (
-                mappedLocation['Site']?.toLowerCase().includes(searchTerm) ||
-                mappedLocation['Building']?.toLowerCase().includes(searchTerm) ||
-                mappedLocation['Department']?.toLowerCase().includes(searchTerm) ||
-                mappedLocation['Description']?.toLowerCase().includes(searchTerm) ||
-                mappedLocation['Room Num']?.toLowerCase().includes(searchTerm) ||
-                mappedLocation['Floor']?.toLowerCase().includes(searchTerm)
-            ) {
-                results.push(mappedLocation);
-            }
-        }
-        return results;
-    } catch (error) {
-        console.error('Error loading or searching location data:', error);
-        alert('Error loading location data: ' + error.message);
-        return [];
+  try {
+    const response = await fetch(browser.runtime.getURL('locations.csv'));
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
     }
+    const csvText = await response.text();
+
+    // Convert search term to lowercase for case-insensitive search
+    searchTerm = searchTerm.toLowerCase();
+
+    // Parse CSV
+    const results = [];
+    const lines = csvText.split('\n');
+    const headers = lines[0]
+      .split(',')
+      .map((header) => header.replace(/"/g, '').trim());
+
+    // Process each line after headers
+    for (let i = 1; i < lines.length; i++) {
+      if (!lines[i].trim()) continue; // Skip empty lines
+
+      // Split lines by comma
+      const values = lines[i].split(',').map((value) => {
+        // Remove quotes, and trim
+        return value.replace(/^["']|["']$/g, '').trim();
+      });
+
+      // Map CSV columns to expected format using explicit indexes - yes, this is a kludgy way of doing it, but I am a hack and it works...
+      const mappedLocation = {
+        Site: values[0] || '-',
+        Building: values[1] || '-',
+        Floor: values[2] || '-',
+        Description: values[4] || '-',
+        'Room Num': values[5] || '-',
+        Department: (values[9] || '-').replace(/["']/g, ''), // Extra cleanup for Department
+      };
+
+      // Search relevant fields only
+      if (
+        mappedLocation['Site']?.toLowerCase().includes(searchTerm) ||
+        mappedLocation['Building']?.toLowerCase().includes(searchTerm) ||
+        mappedLocation['Department']?.toLowerCase().includes(searchTerm) ||
+        mappedLocation['Description']?.toLowerCase().includes(searchTerm) ||
+        mappedLocation['Room Num']?.toLowerCase().includes(searchTerm) ||
+        mappedLocation['Floor']?.toLowerCase().includes(searchTerm)
+      ) {
+        results.push(mappedLocation);
+      }
+    }
+    return results;
+  } catch (error) {
+    console.error('Error loading or searching location data:', error);
+    alert('Error loading location data: ' + error.message);
+    return [];
+  }
 }
 
 // Function to display search results
 function displayResults(results) {
-    const resultsContainer = document.getElementById('searchResults');
-    const resultsBody = document.getElementById('resultsBody');
-    const noResults = document.getElementById('noResults');
-    const tipsBox = document.querySelector('.tips-box');
-    
-    // Clear previous results
-    resultsBody.innerHTML = '';
-    
-    if (results.length === 0) {
-        resultsContainer.style.display = 'block';
-        noResults.style.display = 'block';
-        tipsBox.style.display = 'block';
-        return;
-    }
-    
-    // Hide the no results message and tips, show table
-    noResults.style.display = 'none';
-    tipsBox.style.display = 'none';
+  const resultsContainer = document.getElementById('searchResults');
+  const resultsBody = document.getElementById('resultsBody');
+  const noResults = document.getElementById('noResults');
+  const tipsBox = document.querySelector('.tips-box');
+
+  // Clear previous results
+  resultsBody.innerHTML = '';
+
+  if (results.length === 0) {
     resultsContainer.style.display = 'block';
-    
-    // Add results to table
-    results.forEach(location => {
-        const row = document.createElement('tr');
-        row.innerHTML = `
+    noResults.style.display = 'block';
+    tipsBox.style.display = 'block';
+    return;
+  }
+
+  // Hide the no results message and tips, show table
+  noResults.style.display = 'none';
+  tipsBox.style.display = 'none';
+  resultsContainer.style.display = 'block';
+
+  // Add results to table
+  results.forEach((location) => {
+    const row = document.createElement('tr');
+    row.innerHTML = `
             <td data-label="Site">${location['Site'] || '-'}</td>
             <td data-label="Building">${location['Building'] || '-'}</td>
             <td data-label="Department">${location['Department'] || '-'}</td>
@@ -114,59 +114,59 @@ function displayResults(results) {
             <td data-label="Room">${location['Room Num'] || '-'}</td>
             <td data-label="Floor">${location['Floor'] || '-'}</td>
         `;
-        resultsBody.appendChild(row);
-    });
+    resultsBody.appendChild(row);
+  });
 }
 
 // Set up search input event listener
 document.addEventListener('DOMContentLoaded', () => {
-    const searchInput = document.getElementById('locationSearch');
-    const clearButton = document.getElementById('clearSearch');
-    let debounceTimeout;
+  const searchInput = document.getElementById('locationSearch');
+  const clearButton = document.getElementById('clearSearch');
+  let debounceTimeout;
 
-    // Focus the search input when popup opens
-    window.addEventListener('load', () => {
-        setTimeout(() => {
-            searchInput.focus();
-        }, 0);
-    });
+  // Focus the search input when popup opens
+  window.addEventListener('load', () => {
+    setTimeout(() => {
+      searchInput.focus();
+    }, 0);
+  });
 
-    // Also focus when the popup becomes visible
-    document.addEventListener('visibilitychange', () => {
-        if (!document.hidden) {
-            searchInput.focus();
-        }
-    });
+  // Also focus when the popup becomes visible
+  document.addEventListener('visibilitychange', () => {
+    if (!document.hidden) {
+      searchInput.focus();
+    }
+  });
 
-    // Function to toggle clear button visibility
-    const toggleClearButton = () => {
-        clearButton.style.display = searchInput.value.length > 0 ? 'flex' : 'none';
-    };
+  // Function to toggle clear button visibility
+  const toggleClearButton = () => {
+    clearButton.style.display = searchInput.value.length > 0 ? 'flex' : 'none';
+  };
 
-    // Clear button click handler
-    clearButton.addEventListener('click', () => {
-        searchInput.value = '';
-        toggleClearButton();
-        document.getElementById('searchResults').style.display = 'none';
-        document.getElementById('noResults').style.display = 'none';
-        document.querySelector('.tips-box').style.display = 'block';
-    });
+  // Clear button click handler
+  clearButton.addEventListener('click', () => {
+    searchInput.value = '';
+    toggleClearButton();
+    document.getElementById('searchResults').style.display = 'none';
+    document.getElementById('noResults').style.display = 'none';
+    document.querySelector('.tips-box').style.display = 'block';
+  });
 
-    searchInput.addEventListener('input', (e) => {
-        toggleClearButton();
-        clearTimeout(debounceTimeout);
-        
-        const searchTerm = e.target.value.trim();
-        
-        if (searchTerm === '') {
-            document.getElementById('searchResults').style.display = 'none';
-            document.getElementById('noResults').style.display = 'none';
-            document.querySelector('.tips-box').style.display = 'block';
-            return;
-        }
-        debounceTimeout = setTimeout(async () => {
-            const results = await searchLocations(searchTerm);
-            displayResults(results);
-        }, 300); // Debounce for 300ms to prevent too many searches
-    });
+  searchInput.addEventListener('input', (e) => {
+    toggleClearButton();
+    clearTimeout(debounceTimeout);
+
+    const searchTerm = e.target.value.trim();
+
+    if (searchTerm === '') {
+      document.getElementById('searchResults').style.display = 'none';
+      document.getElementById('noResults').style.display = 'none';
+      document.querySelector('.tips-box').style.display = 'block';
+      return;
+    }
+    debounceTimeout = setTimeout(async () => {
+      const results = await searchLocations(searchTerm);
+      displayResults(results);
+    }, 300); // Debounce for 300ms to prevent too many searches
+  });
 });
